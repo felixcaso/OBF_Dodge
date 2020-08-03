@@ -20,13 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e0b54cdf-a666-4e83-b75c-00ae97874833" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Fonts/OpenSans-Light.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Fonts/PlayfairDisplay-Bold.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Fonts/Yellow Rabbit.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jeopardy.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/p5.sound.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/p5.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/p5.sound.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/sketch.js" beforeDir="false" afterPath="$PROJECT_DIR$/sketch.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -81,6 +78,9 @@
       <workItem from="1595992079731" duration="831000" />
       <workItem from="1596237809789" duration="13304000" />
       <workItem from="1596401795513" duration="3278000" />
+      <workItem from="1596433845888" duration="3589000" />
+      <workItem from="1596468292801" duration="3643000" />
+      <workItem from="1596473942858" duration="3219000" />
     </task>
     <servers />
   </component>

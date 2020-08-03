@@ -2,9 +2,12 @@
 var startGame = true;
 var score;
 var noteCounter=1;
-var notes; //Sprite Group
+var notes; //Note Sprite Group
 var player; //Player Object
-var enemy; //Enemy Object
+var enemy; //Enemy Object/
+var monoSynth;//Synth object
+var music; //  backgound music Object
+var musicButton;
 
 //Borders to falling line with backGround
 var leftWall = 370; 
@@ -30,14 +33,25 @@ function preload(){
     cleftImg = loadImage('Images/clef.png')
     playerImg = loadImage('Images/player.png');
 
+    //Background music
+    music = loadSound('jeopardy.mp3');
+
     //Fonts
     OPEN_SANS_LIGHT = loadFont('Fonts/OpenSans-Light.ttf');
     PLAY_FAIR_DISPLAY_BOLD = loadFont('Fonts/PlayfairDisplay-Bold.ttf');
 }
 
 function setup() {
+    var btnCol = color(235,81,15,60);
     //Create Canvas
     createCanvas(windowWidth,windowHeight);
+    musicButton = createButton('Play Background Music');
+    musicButton.mouseClicked(playMusic);
+    musicButton.size(120,75);
+    musicButton.position(1235,130);
+    musicButton.style('background-color',btnCol);
+    musicButton.style("font-family", "Bodoni");
+    musicButton.style("font-size", "14px");
     cursor('NONE');
     
     //Group of Dropping note
@@ -54,6 +68,14 @@ function setup() {
     startGame = true;
     score = 0;
 }//end setup
+
+function playMusic(){
+    if(music.isPlaying()){
+        music.stop();
+    }else{
+        music.play()
+    }
+}
 
 function setText(){
     //Instructions
@@ -98,11 +120,13 @@ function draw() {
         }
 
         //Sprite  movement
-        for(var i=0; i<allSprites.length; i++) {
-            var s = allSprites[i];
+        for(var i=0; i<notes.length; i++) {
+            var s = notes[i];
+            //s.collide(player,lose);
             if(s.position.y> height+10) {
+                s.changeImage('enemy')
                 s.position.y = random(-200,-100);
-                s.scale = random(.2,.4);
+                s.scale = random(.1,.5);
                 s.position.x = random(leftWall,rightWall);
                 s.setVelocity(0,random(7,20));
             }
@@ -120,12 +144,14 @@ function keyPressed(){
         newNote(noteCounter)
         newEnemy();
         startGame = true;
+        score = 0;
     }
 }
 
 function lose(){
     //Losing display
     background(235,81,15);
+    music.stop();
     startGame = false;
     notes.removeSprites();
 
@@ -144,23 +170,24 @@ function lose(){
 }
 
 function newNote(n){
-    if(n<7){
-        var note = createSprite(random(leftWall,rightWall),random(-300,-100),50,50);
+    if(n<4){
+        var note = createSprite(random(leftWall,rightWall),random(-300,-100),70,70);
         note.scale = random(.1,.3);
         note.setVelocity(0,random(3,10));
         note.debug = true;
-        note.addImage(random(noteImg));
+        note.setDefaultCollider();
+        note.addImage('note'+n,random(noteImg));
         notes.add(note);
     }
 
 }
 
 function newEnemy(){
-    enemy = createSprite(random(leftWall,rightWall),random(-300,-100),10,10);
+    enemy = createSprite(random(leftWall,rightWall),random(-300,-100),20,30);
     enemy.scale = random(.1,.4);
     enemy.setVelocity(0,random(3,10));
     enemy.debug=true;
-    enemy.addImage(cleftImg);
+    enemy.addImage('enemy',cleftImg);
     notes.add(enemy);
 }
 
@@ -177,7 +204,24 @@ class Player{
         
         this.playerSprite.position.x = constrain(mouseX,370,1010);
         this.playerSprite.collide(enemy,lose);
-//
+
     }
+}
+
+function mousedPressed(){
+
+}
+
+function playSynth(){
+
+    notes.remove(enemy);
+    userStartAudio();
+    var note = random(['Fb4 ,G4']);
+    var velocity = random(); // note velocity from 0-1
+    var time = 0;
+    var dur = 1/6;
+    monoSynth.play(note,velocity,time,dur);
+
+    newEnemy();
 }
 
