@@ -10,8 +10,9 @@ var music; //  backgound music Object
 var musicButton;
 
 //Borders to falling line with backGround
-var leftWall = 370; 
-var rightWall = 1010;
+var leftWall = 330;
+var rightWall = 1050;
+var dropLines = [330,510,690,870,1050];
 
 //Images Variables
 var bgImg;
@@ -42,40 +43,34 @@ function preload(){
 }
 
 function setup() {
-    var btnCol = color(235,81,15,60);
+    // var btnCol = color(235,81,15,60);
+
     //Create Canvas
     createCanvas(windowWidth,windowHeight);
-    musicButton = createButton('Play Background Music');
-    musicButton.mouseClicked(playMusic);
-    musicButton.size(120,75);
-    musicButton.position(1235,130);
-    musicButton.style('background-color',btnCol);
-    musicButton.style("font-family", "Bodoni");
-    musicButton.style("font-size", "14px");
-    cursor('NONE');
+    // musicButton = createButton('Play Background Music');
+    // musicButton.mouseClicked(playMusic);
+    // musicButton.size(120,75);
+    // musicButton.position(1235,130);
+    // musicButton.style('background-color',btnCol);
+    // musicButton.style("font-family", "Bodoni");
+    // musicButton.style("font-size", "14px");
+    //cursor('NONE');
+
+
+
     
     //Group of Dropping note
     notes = new Group();
-
     //inital note
     newNote(noteCounter);
-
     // Enemy Sprite
     newEnemy();
     
     //Creating Player sprite 
-    player = new Player(mouseX,windowHeight-100,10,10,playerImg);
+    player = new Player(690,windowHeight-100,10,10,playerImg);
     startGame = true;
     score = 0;
 }//end setup
-
-function playMusic(){
-    if(music.isPlaying()){
-        music.stop();
-    }else{
-        music.play()
-    }
-}
 
 function setText(){
     //Instructions
@@ -106,14 +101,24 @@ function setText(){
     text('Score: '+score,10,35);
 }
 
+
 function draw() {
     if(startGame){
         //Background
         background(bgImg);
+
+        fill(0);
+        strokeWeight(10);
+        line(330,0,330,windowHeight);
+        line(510,0,510,windowHeight);
+        line(690,0,690,windowHeight);
+        line(870,0,870,windowHeight);
+        line(1050,0,1050,windowHeight);
+
         setText(); // Settiing Iymanni's Logo && Instructions && Score
 
         //Increase score every 60s and drop new note
-        if(frameCount %20 == 0){
+        if(frameCount % 20 == 0){
             score++;
             noteCounter++;
             newNote(noteCounter);
@@ -126,8 +131,8 @@ function draw() {
             if(s.position.y> height+10) {
                 s.changeImage('enemy')
                 s.position.y = random(-200,-100);
-                s.scale = random(.1,.5);
-                s.position.x = random(leftWall,rightWall);
+                s.scale = random(.2,.5);
+                s.position.x = random(dropLines);
                 s.setVelocity(0,random(7,20));
             }
         }
@@ -146,6 +151,13 @@ function keyPressed(){
         startGame = true;
         score = 0;
     }
+    else if(keyCode === LEFT_ARROW){
+        Player.playerSprite.position.x =  Player.playerSprite.position.x - 180;
+    }
+    else if(keyCode === RIGHT_ARROW){
+        Player.playerSprite.position.x =  Player.playerSprite.position.x + 180;
+    }
+
 }
 
 function lose(){
@@ -171,8 +183,8 @@ function lose(){
 
 function newNote(n){
     if(n<4){
-        var note = createSprite(random(leftWall,rightWall),random(-300,-100),70,70);
-        note.scale = random(.1,.3);
+        var note = createSprite(random(dropLines),random(-300,-100),70,70);
+        note.scale = random(.2,.3);
         note.setVelocity(0,random(3,10));
         note.debug = true;
         note.setDefaultCollider();
@@ -183,8 +195,8 @@ function newNote(n){
 }
 
 function newEnemy(){
-    enemy = createSprite(random(leftWall,rightWall),random(-300,-100),20,30);
-    enemy.scale = random(.1,.4);
+    enemy = createSprite(random(dropLines),random(-300,-100),20,30);
+    enemy.scale = random(.2,.4);
     enemy.setVelocity(0,random(3,10));
     enemy.debug=true;
     enemy.addImage('enemy',cleftImg);
@@ -198,30 +210,22 @@ class Player{
         this.playerSprite.scale = .1; 
         this.playerSprite.debug = true;
         this.playerSprite.addImage('player',img);
-        this.playerSprite.setCollider ('rectangle',mouseX/2,mouseY/2,1000,2500);
+        this.playerSprite.setCollider ('rectangle',this.playerSprite.position.x/2,this.playerSprite.position.y/2,1000,2500);
+
+        this.playerSprite.position.x = xPos;
     }    
     move(){
-        
-        this.playerSprite.position.x = constrain(mouseX,370,1010);
-        this.playerSprite.collide(enemy,lose);
+        if(keyCode === LEFT_ARROW){
+            this.playerSprite.position.x =  this.playerSprite.position.x - 180;
+        }
+        if(keyCode === RIGHT_ARROW){
+            this.playerSprite.position.x =  this.playerSprite.position.x + 180;
+        }
+
+        this.playerSprite.position.x = constrain(this.playerSprite.position.x,leftWall,rightWall);
+        //this.playerSprite.collide(enemy,lose);
 
     }
 }
 
-function mousedPressed(){
-
-}
-
-function playSynth(){
-
-    notes.remove(enemy);
-    userStartAudio();
-    var note = random(['Fb4 ,G4']);
-    var velocity = random(); // note velocity from 0-1
-    var time = 0;
-    var dur = 1/6;
-    monoSynth.play(note,velocity,time,dur);
-
-    newEnemy();
-}
 
