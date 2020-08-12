@@ -129,7 +129,7 @@ Tone.Transport.scheduleRepeat(function (time) {
         //if(Tone.Transport.ticks>=10700){
             gameOver()
             Tone.Transport.stop()
-            alert('game over')
+            //alert('game over')
         }
 
 

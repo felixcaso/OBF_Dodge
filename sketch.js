@@ -11,12 +11,17 @@ var unique_username;
 var inp;
 
 var socket;
-
+var scoresFromDB;
+var gotScores = false;
+var globalWinHeight;
 //Borders to falling line with backround(240px div)
-var leftString = 330;
-var rightString = 1050;
-var stringLines = [leftString,570,810,rightString];
-
+//distance between strings
+var leftString;
+var rightString;
+var stringLines;
+var stringHorSpan; //distance between left most string and right most string
+var col;
+var fontCol;
 //Images Variables
 var backgroundImg;
 var noteImg = [];
@@ -40,55 +45,85 @@ function preload(){
     PLAY_FAIR_DISPLAY_BOLD = loadFont('Fonts/PlayfairDisplay-Bold.ttf');
 }
 
+function showScores(data){
+        //alert(data);
+        //console.log(data)
+
+        var textHeight = 170;
+        textSize(30);
+        textStyle(BOLD);
+        fill(255)
+        //textStyle(BOLD)
+    gameButton.style("font-family", "Bodoni");
+        text('High Scores',9.25,textHeight-40)
+        fill(col)
+        //textStyle(NORMAL)
+        text('High Scores',10,textHeight-40+0.75)
+        //textStyle(NORMAL);
+        data.forEach(entry => {
+            //console.log(entry);
+            if(Object.keys(entry).length>2) {
+                if(textHeight < globalWinHeight-40) {
+                    fill(255)
+                    textStyle(BOLD)
+                    text(entry.username + ': ' + entry.score, 9.25, textHeight)
+                    fill(col)
+                    //textStyle(NORMAL)
+                    text(entry.username + ': ' + entry.score, 10, textHeight + 0.75)
+                    textHeight += 40
+                }
+            }
+        })
+}
+
 
 function setup() {
+    //fullscreen(true);
+    globalWinHeight =  windowHeight;
+    leftString = windowWidth/4;
+    rightString = 3/4*windowWidth;
+    stringHorSpan = windowWidth /2;
+    stringLines = [leftString,leftString+1/2*windowWidth*1/3,leftString+1/2*windowWidth*2/3,rightString];
+
     socket = io();
     socket.on('scores_from_db',
-        function(data) {
-            alert(data);
+        function(data){
+            scoresFromDB = data;
+            //console.log(scoresFromDB);
+            gotScores = true;
         }
+
     );
     //Create Canvas
-    var col = color(235,81,15);
+    col = color(235,81,15);
 
-    var fontCol = color(255);
+    fontCol = color(255);
     createCanvas(windowWidth,windowHeight);
     gameButton = createButton('Start Game');
     gameButton.mouseClicked(startGame);
     gameButton.size(120,75);
-    gameButton.position(1135,130);
+    gameButton.position(windowWidth-windowWidth/5,130);
     gameButton.style('background-color',col);
     gameButton.style("font-family", "Bodoni");
-    gameButton.style("font-size", "14px");
+    gameButton.style("font-size", "18px");
 
-    introP2 = createP('FIDDLER HERO!');
-    introP2.position(1135,150+80);
-    introP2.style('font-size', '20px');
+    //introP2 = createP('FIDDLER HERO!');
+    //introP2.position(windowWidth-windowWidth/5,150+80);
+    //introP2.style('font-size', '14px');
     //introP2.style('display', 'table');
     //introP2.style('margin', '0 auto');
     //introP2.style('margin-top', '1%');
 
-    inp = createInput('').attribute('placeholder', 'initials');
-    inp.position(1135,130+150);
+    inp = createInput('').attribute('placeholder', 'Enter Initials');
+    inp.position(windowWidth-windowWidth/5,130+100);
     inp.size(120,40);
-    inp.style('font-size', '20px');
+    inp.style('font-size', '18px');
+    inp.style("font-family", "Bodoni");
     inp.style('text-align', 'center');
     //inp.style('width', '50px');
     //inp.style('display', 'table');
     //inp.style('margin', '0 auto');
     //inp.style('margin-top', '5%');
-
-    /*
-    submit_button = createButton('ENTER YOUR INITIALS');
-    submit_button.mousePressed(startGame);
-    submit_button.style('display', 'table');
-    submit_button.style('margin', '0 auto');
-    submit_button.style('margin-top', '5%');
-    submit_button.style('font-size', '20px');
-    submit_button.style('background-color', col);
-    submit_button.style('color', fontCol);
-    */
-
 
    //notes = new Group();
 
@@ -123,11 +158,13 @@ function draw() {
     background(backgroundImg);
     if(gameStarted){
         setText();
-
+        if(gotScores) {
+            showScores(scoresFromDB);
+        }
         fill(0);
         strokeWeight(10);
-        line(570,0,570,windowHeight);
-        line(810,0,810,windowHeight);
+        line(stringLines[1],0,stringLines[1],windowHeight);
+        line(stringLines[2],0,stringLines[2],windowHeight);
         fill(255);
         strokeWeight(3);
         line(leftString,player.sprite.position.y-(player.sprite.height/2)
@@ -160,9 +197,9 @@ function draw() {
 
 function keyPressed() {
     if (keyCode === LEFT_ARROW) {
-        player.sprite.position.x -= 240;
+        player.sprite.position.x -= stringHorSpan/3;
     } else if (keyCode === RIGHT_ARROW) {
-        player.sprite.position.x += 240;
+        player.sprite.position.x += stringHorSpan/3;
     }
     if(gameStarted) {
         player.sprite.position.x = constrain(player.sprite.position.x, leftString, rightString);
@@ -185,7 +222,7 @@ function startGame(){
         gameStarted = true;
         score = 0;
         unique_username = inp.value();
-        register_user();
+        //register_user();
         get_scores();
         player = new Player(random(stringLines),windowHeight - 100,10,10,playerImg);
         gNote = new Note();
@@ -252,8 +289,11 @@ function setText(){
     //Display Score
     textSize(50);
     textAlign(LEFT,TOP);
+    fill(255);
+    textStyle(BOLD);
+    text('Score: '+score,9.25,35);
     fill(235,81,15);
-    text('Score: '+score,10,35);
+    text('Score: '+score,10,35.75);
 }
 
 function playNote(){

@@ -68,9 +68,9 @@ io.on('connection', (socket) => {
     );
 
     socket.on('get_scores', function(data) {
-        dodgeDB.find( {} ).sort( { score: 1 }).toArray(function(err, result) {
+        dodgeDB.find( {} ).sort( { score: -1 }).toArray(function(err, result) {
 
-            console.log(result);
+            //console.log(result);
             //only send to client
             socket.emit('scores_from_db',result);
 
