@@ -6,6 +6,7 @@ var player; //Player object
 var notes; //Notes Group
 var gNote;
 var counter = 0;
+var timeStamp = 0; //timer placeholder
 
 //Borders to falling line with backround(240px div)
 var leftString = 330;
@@ -76,6 +77,10 @@ function draw() {
 
         if(gNote.sprite.position.y > player.sprite.position.y ){//windowHeight-10
             gNote.sprite.remove();
+            //userNote = false;
+        }
+
+        if(userNote && frameCount > timeStamp + 40){
             userNote = false;
         }
 
@@ -114,8 +119,8 @@ function startGame(){
         gNote = new Note();
 
         //this starts the song playing
-        Tone.Transport.bpm.value = Tone.Transport.bpm.value - 80;
-        CW.tempoOffset = CW.tempoOffset - 80;
+        Tone.Transport.bpm.value = Tone.Transport.bpm.value - 40;
+        CW.tempoOffset = CW.tempoOffset - 40;
         Tone.Transport.start();
 
     }
@@ -138,7 +143,7 @@ class Note{
     constructor() {
         this.sprite = createSprite(random(stringLines), 0, 50, 50);
         this.sprite.setDefaultCollider();
-        this.sprite.setVelocity(0, 15);
+        this.sprite.setVelocity(0, 18);
         this.sprite.scale = .3;
         this.sprite.debug = true;
         this.sprite.addImage('noteSprite',random(noteImg));
@@ -176,6 +181,7 @@ function setText(){
 
 function playNote(){
     userNote = true;
+    timeStamp = frameCount;
     score++;
     gNote.sprite.remove();
 }

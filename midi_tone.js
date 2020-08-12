@@ -115,7 +115,7 @@ Tone.Transport.scheduleRepeat(function (time) {
         //a tolerance of 50 seems to work for finding violin notes that
         //start at about the same ticks as where the song is currently
         //playing the piano notes
-        if (Math.abs((Tone.Transport.ticks + 600) - note.ticks) < 50) {
+        if (Math.abs((Tone.Transport.ticks+450) - note.ticks) < 50) {
            // document.getElementById("upcomingnotes").textContent = note.name
 
             //create a new graphical note in the game
