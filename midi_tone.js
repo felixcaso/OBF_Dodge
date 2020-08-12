@@ -1,10 +1,10 @@
 //this variable keeps track of the letter key that is pressed by the user
-var noteVal = 'z';
+// var noteVal = 'z';
 
 //this gets triggered when a key is pressed in the input box
-function myFunction(event) {
-    noteVal = event.key;
-}
+// function myFunction(event) {
+//     noteVal = event.key;
+// }
 
 //cw is some kind of timing offset - not really sure how it functions
 var CW = CW || {};
@@ -22,9 +22,11 @@ var violinSynth;
 var part2;
 
 //this is the boolean that keeps track of whether the right note was pressed
-var userNote = false;
+var userNote = true;
+
 //this is the string that shows the name of the violin note
 var noteName = '';
+
 //this keeps track of the ticks of the previous note
 var oldNoteTicks = 0;
 
@@ -103,7 +105,7 @@ function makeSong(midi) {
 //************** Set up position & BPM indicators  ********************
 
 Tone.Transport.scheduleRepeat(function (time) {
-    showPosition()
+    //showPosition()
 
     violinJSON.tracks[0].notes.forEach(note => {
         //in general, notes seem to be about 400 ticks apart
@@ -113,41 +115,41 @@ Tone.Transport.scheduleRepeat(function (time) {
         //start at about the same ticks as where the song is currently
         //playing the piano notes
         if (Math.abs((Tone.Transport.ticks + 600) - note.ticks) < 50) {
-            document.getElementById("upcomingnotes").textContent = note.name
+           // document.getElementById("upcomingnotes").textContent = note.name
             //create a new graphical note in the game
             if(note.ticks>oldNoteTicks+60) {
-                newNote();
+                //newNote();
+                //gNote = new Note();
                 oldNoteTicks = note.ticks;
             }
         }
 
         if (Math.abs(Tone.Transport.ticks - note.ticks) < 50) {
 
-            if ((note.name).indexOf(noteVal.toUpperCase()) > -1) {
-                //alert("hello found inside your_string");
-                userNote = true;
-            } else {
-                userNote = false;
-            }
-            document.getElementById("notes").textContent = note.name
-
+            // if ((note.name).indexOf(noteVal.toUpperCase()) > -1) {
+            //     //alert("hello found inside your_string");
+            //     userNote = true;
+            // } else {
+            //     userNote = false;
+            // }
+            //document.getElementById("notes").textContent = note.name
         }
     })
 }, "16n")
 
 
 //this is not being called in obfdodge - but left in for potential future use
-function showPosition() {
-    //need to coordinate this with latencyHint in setupPlayer if I want accuracy
-    var myPos = Tone.Transport.position
-    var posArray = myPos.split(/\D+/); // split based on non-digits
-    var myBar = Number(posArray[0]) + 1   //first element, converted to number, then increased
-    var myBeat = Number(posArray[1]) + 1
-}
+// function showPosition() {
+//     //need to coordinate this with latencyHint in setupPlayer if I want accuracy
+//     var myPos = Tone.Transport.position
+//     var posArray = myPos.split(/\D+/); // split based on non-digits
+//     var myBar = Number(posArray[0]) + 1   //first element, converted to number, then increased
+//     var myBeat = Number(posArray[1]) + 1
+// }
 
-function showNote() {
-    document.getElementById("violinContent").textContent = Tone.Transport.ticks
-}
+// function showNote() {
+//     document.getElementById("violinContent").textContent = Tone.Transport.ticks
+// }
 
 
 //************** Set up buttons  ********************

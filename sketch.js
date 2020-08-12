@@ -4,8 +4,9 @@ var gameButton;
 var score;
 var player; //Player object
 var notes; //Notes Group
+var gNote;
 
-//Borders to falling line with backround(180px div)
+//Borders to falling line with backround(240px div)
 var leftString = 330;
 var rightString = 1050;
 var stringLines = [leftString,570,810,rightString];
@@ -27,7 +28,6 @@ function preload(){
     }
     backgroundImg = loadImage('Images/bg2.jpg');
     playerImg = loadImage('Images/player.png');
-    //cleftImg = loadImage('Images/clef.png');
 
     //Fonts
     OPEN_SANS_LIGHT = loadFont('Fonts/OpenSans-Light.ttf');
@@ -46,7 +46,7 @@ function setup() {
     gameButton.style("font-family", "Bodoni");
     gameButton.style("font-size", "14px");
 
-    notes = new Group();
+   //notes = new Group();
 
 }
 
@@ -54,27 +54,39 @@ function draw() {
     background(backgroundImg);
     if(gameStarted){
         setText();
+
+
         fill(0);
         strokeWeight(10);
         line(570,0,570,windowHeight);
         line(810,0,810,windowHeight);
-        if(frameCount % 60 == 0){
-            score++;
-        }
+        fill(255);
+        strokeWeight(3);
+        // line(leftString,player.playerSprite.position.y-(player.playerSprite.height/2)
+        //     ,rightString,player.playerSprite.position.y-(player.playerSprite.height/2));
 
         //Vertical Note Movement
-        for(var i=notes.length-1; i>=0; i--) {
-            if (notes[i].position.y > height + 10) {
-                notes.splice(i, 1);
-            }
-        }
+        // for(var i=notes.length-1; i>=0; i--) {
+        //     notes[i].collide(player.playerSprite,playNote);
+        //     if (notes[i].position.y > player.playerSprite.position.y - (player.playerSprite.height/2)) {
+        //         //notes.splice(i, 1);
+        //         notes[i].remove();
+        //     }
+        // }
 
+        if(gNote.noteSprite.position.y > player.playerSprite.position.y - (player.playerSprite.height/2)){
+            gNote.noteSprite.remove();
+            //userNote = false;
+        }
+        //gNote.noteSprite.collide(player.playerSprite,playNote);
         drawSprites();
+
+
     }
 
 }
 
-function keyReleased() {
+function keyPressed() {
     if (keyCode === LEFT_ARROW) {
         player.playerSprite.position.x -= 240;
     } else if (keyCode === RIGHT_ARROW) {
@@ -83,22 +95,25 @@ function keyReleased() {
     player.playerSprite.position.x =constrain(player.playerSprite.position.x,leftString,rightString);
 }
 
-function newNote() {
-    var note = createSprite(random(stringLines), 0, 50, 50);
-    note.setVelocity(0, 15);
-    note.scale = .3;
-    note.debug = true;
-    note.addImage(random(noteImg));
-    notes.add(note);
-
-}
+// function newNote() {
+//     userNote = false;
+//
+//     note = createSprite(random(stringLines), 0, 50, 50);
+//     note.setDefaultCollider();
+//     note.setVelocity(0, 15);
+//     note.scale = .3;
+//     note.debug = true;
+//     note.addImage(random(noteImg));
+//     //notes.add(note);
+// }
 
 function startGame(){
     if(!gameStarted){
         gameStarted = true;
         score = 0;
         player = new Player(random(stringLines),windowHeight - 100,10,10,playerImg);
-        //newNote();
+        //gNote = new Note();
+
         //this starts the song playing
         Tone.Transport.bpm.value = Tone.Transport.bpm.value - 80;
         CW.tempoOffset = CW.tempoOffset - 80;
@@ -111,10 +126,25 @@ class Player {
     //Player constructor to create player Sprite
     constructor(xPos, yPos, w, h, img) {
         this.playerSprite = createSprite(xPos, yPos, w, h);
+        this.playerSprite.setDefaultCollider();
+        //this.playerSprite.immovable = true;
         this.playerSprite.scale = .1;
         this.playerSprite.debug = true;
-        this.playerSprite.addImage('player', img);
+        this.playerSprite.addImage('playerSprite', img);
     }
+
+}
+
+class Note{
+    constructor() {
+        this.noteSprite = createSprite(random(stringLines), 0, 50, 50);
+        this.noteSprite.setDefaultCollider();
+        this.noteSprite.setVelocity(0, 15);
+        this.noteSprite.scale = .3;
+        this.noteSprite.debug = true;
+        this.noteSprite.addImage(random(noteImg));
+    }
+
 
 }
 
@@ -143,4 +173,11 @@ function setText(){
     textAlign(LEFT,TOP);
     fill(235,81,15);
     text('Score: '+score,10,35);
+}
+
+function playNote(){
+    //userNote = true;
+    score++;
+    gNote.noteSprite.remove();
+
 }
