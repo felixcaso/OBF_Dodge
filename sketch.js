@@ -62,13 +62,10 @@ function draw() {
             score++;
         }
 
-        //Vertival Note Movement
-        for(var i=0; i<notes.length; i++) {
-            var s = notes[i];
-            if (s.position.y > height + 10) {
-                s.position.y = 0
-                s.position.x = random(stringLines);
-                s.setVelocity(0, 5);
+        //Vertical Note Movement
+        for(var i=notes.length-1; i>=0; i--) {
+            if (notes[i].position.y > height + 10) {
+                notes.splice(i, 1);
             }
         }
 
@@ -88,7 +85,7 @@ function keyReleased() {
 
 function newNote() {
     var note = createSprite(random(stringLines), 0, 50, 50);
-    note.setVelocity(0, 5);
+    note.setVelocity(0, 15);
     note.scale = .3;
     note.debug = true;
     note.addImage(random(noteImg));
@@ -101,12 +98,17 @@ function startGame(){
         gameStarted = true;
         score = 0;
         player = new Player(random(stringLines),windowHeight - 100,10,10,playerImg);
-        newNote();
+        //newNote();
+        //this starts the song playing
+        Tone.Transport.bpm.value = Tone.Transport.bpm.value - 80;
+        CW.tempoOffset = CW.tempoOffset - 80;
+        Tone.Transport.start();
+
     }
 }
 
 class Player {
-    //Player constructor to creater player Sprite
+    //Player constructor to create player Sprite
     constructor(xPos, yPos, w, h, img) {
         this.playerSprite = createSprite(xPos, yPos, w, h);
         this.playerSprite.scale = .1;
