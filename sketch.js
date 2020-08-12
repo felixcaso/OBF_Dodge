@@ -1,7 +1,7 @@
 //Game variables
 var gameStarted = false;
 var gameButton;
-var score;
+var score = 0;
 var player; //Player object
 var notes; //Notes Group
 var gNote;
@@ -43,6 +43,11 @@ function preload(){
 
 function setup() {
     socket = io();
+    socket.on('scores_from_db',
+        function(data) {
+            alert(data);
+        }
+    );
     //Create Canvas
     var col = color(235,81,15);
 
@@ -89,6 +94,31 @@ function setup() {
 
 }
 
+// Function for sending to the socket
+function register_user() {
+    var data = {
+        unique_username: unique_username,
+    };
+    socket.emit('register_user',data);
+}
+
+function register_score() {
+    var data = {
+        unique_username: unique_username,
+        score: score,
+    };
+    socket.emit('register_score',data);
+}
+
+function get_scores() {
+    var data = {
+
+    };
+    socket.emit('get_scores',data);
+}
+
+
+
 function draw() {
     background(backgroundImg);
     if(gameStarted){
@@ -134,7 +164,9 @@ function keyPressed() {
     } else if (keyCode === RIGHT_ARROW) {
         player.sprite.position.x += 240;
     }
-    player.sprite.position.x =constrain(player.sprite.position.x,leftString,rightString);
+    if(gameStarted) {
+        player.sprite.position.x = constrain(player.sprite.position.x, leftString, rightString);
+    }
 }
 
 // function newNote() {
@@ -153,6 +185,8 @@ function startGame(){
         gameStarted = true;
         score = 0;
         unique_username = inp.value();
+        register_user();
+        get_scores();
         player = new Player(random(stringLines),windowHeight - 100,10,10,playerImg);
         gNote = new Note();
 
@@ -162,6 +196,11 @@ function startGame(){
         Tone.Transport.start();
 
     }
+}
+
+function gameOver(){
+    console.log('game over in sketch called')
+    register_score();
 }
 
 class Player {

@@ -125,17 +125,15 @@ Tone.Transport.scheduleRepeat(function (time) {
                 oldNoteTicks = note.ticks;
             }
         }
+        if(Tone.Transport.ticks>=90700){
+        //if(Tone.Transport.ticks>=10700){
+            gameOver()
+            Tone.Transport.stop()
+            alert('game over')
+        }
 
-        // if (Math.abs(Tone.Transport.ticks - note.ticks) < 50) {
-        //
-        //     // if ((note.name).indexOf(noteVal.toUpperCase()) > -1) {
-        //     //     //alert("hello found inside your_string");
-        //     //     userNote = true;
-        //     // } else {
-        //     //     userNote = false;
-        //     // }
-        //     //document.getElementById("notes").textContent = note.name
-        // }
+
+
     })
 }, "16n")
 

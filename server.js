@@ -41,4 +41,40 @@ server.listen(port, hostname, function () {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
+
+    socket.on('register_user',
+        function(data) {
+            var unique_username = data.unique_username;
+            dodgeDB.insertOne({
+                username: unique_username
+            }, function (err, result) {
+                if (err) throw err;
+            });
+        }
+    );
+
+    socket.on('register_score',
+        function(data) {
+            console.log('register score on server')
+            var unique_username = data.unique_username;
+            var score = data.score;
+            dodgeDB.insertOne({
+                username: unique_username,
+                score: score
+            }, function (err, result) {
+                if (err) throw err;
+            });
+        }
+    );
+
+    socket.on('get_scores', function(data) {
+        dodgeDB.find( {} ).sort( { score: 1 }).toArray(function(err, result) {
+
+            console.log(result);
+            //only send to client
+            socket.emit('scores_from_db',result);
+
+            if (err) throw err;
+        });
+    });
 });
