@@ -11,6 +11,7 @@ var CW = CW || {};
 
 var CW_violin = CW_violin || {};
 
+
 CW.tempoOffset = 0;    //a property to manage the global changes to tempo
 
 CW_violin.tempoOffset = 0;
@@ -22,7 +23,7 @@ var violinSynth;
 var part2;
 
 //this is the boolean that keeps track of whether the right note was pressed
-var userNote = true;
+var userNote = false;
 
 //this is the string that shows the name of the violin note
 var noteName = '';
@@ -116,29 +117,31 @@ Tone.Transport.scheduleRepeat(function (time) {
         //playing the piano notes
         if (Math.abs((Tone.Transport.ticks + 600) - note.ticks) < 50) {
            // document.getElementById("upcomingnotes").textContent = note.name
+
             //create a new graphical note in the game
             if(note.ticks>oldNoteTicks+60) {
                 //newNote();
-                //gNote = new Note();
+                gNote = new Note();
                 oldNoteTicks = note.ticks;
             }
         }
 
-        if (Math.abs(Tone.Transport.ticks - note.ticks) < 50) {
-
-            // if ((note.name).indexOf(noteVal.toUpperCase()) > -1) {
-            //     //alert("hello found inside your_string");
-            //     userNote = true;
-            // } else {
-            //     userNote = false;
-            // }
-            //document.getElementById("notes").textContent = note.name
-        }
+        // if (Math.abs(Tone.Transport.ticks - note.ticks) < 50) {
+        //
+        //     // if ((note.name).indexOf(noteVal.toUpperCase()) > -1) {
+        //     //     //alert("hello found inside your_string");
+        //     //     userNote = true;
+        //     // } else {
+        //     //     userNote = false;
+        //     // }
+        //     //document.getElementById("notes").textContent = note.name
+        // }
     })
 }, "16n")
 
 
 //this is not being called in obfdodge - but left in for potential future use
+
 // function showPosition() {
 //     //need to coordinate this with latencyHint in setupPlayer if I want accuracy
 //     var myPos = Tone.Transport.position

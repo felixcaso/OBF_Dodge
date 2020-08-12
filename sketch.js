@@ -5,6 +5,7 @@ var score;
 var player; //Player object
 var notes; //Notes Group
 var gNote;
+var counter = 0;
 
 //Borders to falling line with backround(240px div)
 var leftString = 330;
@@ -41,7 +42,7 @@ function setup() {
     gameButton = createButton('Start Game');
     gameButton.mouseClicked(startGame);
     gameButton.size(120,75);
-    gameButton.position(1235,130);
+    gameButton.position(1135,130);
     gameButton.style('background-color',col);
     gameButton.style("font-family", "Bodoni");
     gameButton.style("font-size", "14px");
@@ -55,15 +56,14 @@ function draw() {
     if(gameStarted){
         setText();
 
-
         fill(0);
         strokeWeight(10);
         line(570,0,570,windowHeight);
         line(810,0,810,windowHeight);
         fill(255);
         strokeWeight(3);
-        // line(leftString,player.playerSprite.position.y-(player.playerSprite.height/2)
-        //     ,rightString,player.playerSprite.position.y-(player.playerSprite.height/2));
+        line(leftString,player.sprite.position.y-(player.sprite.height/2)
+            ,rightString,player.sprite.position.y-(player.sprite.height/2));
 
         //Vertical Note Movement
         // for(var i=notes.length-1; i>=0; i--) {
@@ -74,30 +74,29 @@ function draw() {
         //     }
         // }
 
-        if(gNote.noteSprite.position.y > player.playerSprite.position.y - (player.playerSprite.height/2)){
-            gNote.noteSprite.remove();
-            //userNote = false;
+        if(gNote.sprite.position.y > player.sprite.position.y ){//windowHeight-10
+            gNote.sprite.remove();
+            userNote = false;
         }
-        //gNote.noteSprite.collide(player.playerSprite,playNote);
+
+        gNote.sprite.collide(player.sprite,playNote);
         drawSprites();
+    }//end game started(main loop)
 
+}//end draw()
 
-    }
-
-}
 
 function keyPressed() {
     if (keyCode === LEFT_ARROW) {
-        player.playerSprite.position.x -= 240;
+        player.sprite.position.x -= 240;
     } else if (keyCode === RIGHT_ARROW) {
-        player.playerSprite.position.x += 240;
+        player.sprite.position.x += 240;
     }
-    player.playerSprite.position.x =constrain(player.playerSprite.position.x,leftString,rightString);
+    player.sprite.position.x =constrain(player.sprite.position.x,leftString,rightString);
 }
 
 // function newNote() {
-//     userNote = false;
-//
+//     userNote = false;//
 //     note = createSprite(random(stringLines), 0, 50, 50);
 //     note.setDefaultCollider();
 //     note.setVelocity(0, 15);
@@ -112,7 +111,7 @@ function startGame(){
         gameStarted = true;
         score = 0;
         player = new Player(random(stringLines),windowHeight - 100,10,10,playerImg);
-        //gNote = new Note();
+        gNote = new Note();
 
         //this starts the song playing
         Tone.Transport.bpm.value = Tone.Transport.bpm.value - 80;
@@ -125,24 +124,24 @@ function startGame(){
 class Player {
     //Player constructor to create player Sprite
     constructor(xPos, yPos, w, h, img) {
-        this.playerSprite = createSprite(xPos, yPos, w, h);
-        this.playerSprite.setDefaultCollider();
+        this.sprite = createSprite(xPos, yPos, w, h);
+        this.sprite.setDefaultCollider();
         //this.playerSprite.immovable = true;
-        this.playerSprite.scale = .1;
-        this.playerSprite.debug = true;
-        this.playerSprite.addImage('playerSprite', img);
+        this.sprite.scale = .1;
+        this.sprite.debug = true;
+        this.sprite.addImage('playerSprite', img);
     }
 
 }
 
 class Note{
     constructor() {
-        this.noteSprite = createSprite(random(stringLines), 0, 50, 50);
-        this.noteSprite.setDefaultCollider();
-        this.noteSprite.setVelocity(0, 15);
-        this.noteSprite.scale = .3;
-        this.noteSprite.debug = true;
-        this.noteSprite.addImage(random(noteImg));
+        this.sprite = createSprite(random(stringLines), 0, 50, 50);
+        this.sprite.setDefaultCollider();
+        this.sprite.setVelocity(0, 15);
+        this.sprite.scale = .3;
+        this.sprite.debug = true;
+        this.sprite.addImage('noteSprite',random(noteImg));
     }
 
 
@@ -176,8 +175,7 @@ function setText(){
 }
 
 function playNote(){
-    //userNote = true;
+    userNote = true;
     score++;
-    gNote.noteSprite.remove();
-
+    gNote.sprite.remove();
 }
