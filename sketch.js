@@ -36,9 +36,15 @@ function preload(){
     PLAY_FAIR_DISPLAY_BOLD = loadFont('Fonts/PlayfairDisplay-Bold.ttf');
 }
 
+function greet(){
+
+}
+
 function setup() {
     //Create Canvas
     var col = color(235,81,15);
+
+    var fontCol = color(255);
     createCanvas(windowWidth,windowHeight);
     gameButton = createButton('Start Game');
     gameButton.mouseClicked(startGame);
@@ -47,6 +53,35 @@ function setup() {
     gameButton.style('background-color',col);
     gameButton.style("font-family", "Bodoni");
     gameButton.style("font-size", "14px");
+
+    introP2 = createP('FIDDLER HERO!');
+    introP2.position(1135,150+80);
+    introP2.style('font-size', '20px');
+    //introP2.style('display', 'table');
+    //introP2.style('margin', '0 auto');
+    //introP2.style('margin-top', '1%');
+
+    inp = createInput('').attribute('placeholder', 'initials');
+    inp.position(1135,130+150);
+    inp.size(120,40);
+    inp.style('font-size', '20px');
+    inp.style('text-align', 'center');
+    //inp.style('width', '50px');
+    //inp.style('display', 'table');
+    //inp.style('margin', '0 auto');
+    //inp.style('margin-top', '5%');
+
+    /*
+    submit_button = createButton('ENTER YOUR INITIALS');
+    submit_button.mousePressed(startGame);
+    submit_button.style('display', 'table');
+    submit_button.style('margin', '0 auto');
+    submit_button.style('margin-top', '5%');
+    submit_button.style('font-size', '20px');
+    submit_button.style('background-color', col);
+    submit_button.style('color', fontCol);
+    */
+
 
    //notes = new Group();
 
