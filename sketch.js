@@ -7,6 +7,10 @@ var notes; //Notes Group
 var gNote;
 var counter = 0;
 var timeStamp = 0; //timer placeholder
+var unique_username;
+var inp;
+
+var socket;
 
 //Borders to falling line with backround(240px div)
 var leftString = 330;
@@ -36,11 +40,9 @@ function preload(){
     PLAY_FAIR_DISPLAY_BOLD = loadFont('Fonts/PlayfairDisplay-Bold.ttf');
 }
 
-function greet(){
-
-}
 
 function setup() {
+    socket = io();
     //Create Canvas
     var col = color(235,81,15);
 
@@ -150,6 +152,7 @@ function startGame(){
     if(!gameStarted){
         gameStarted = true;
         score = 0;
+        unique_username = inp.value();
         player = new Player(random(stringLines),windowHeight - 100,10,10,playerImg);
         gNote = new Note();
 
