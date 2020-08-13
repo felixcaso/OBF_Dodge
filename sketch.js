@@ -14,6 +14,7 @@ var socket;
 var scoresFromDB;
 var gotScores = false;
 var globalWinHeight;
+var globalWinWidth;
 //Borders to falling line with backround(240px div)
 //distance between strings
 var leftString;
@@ -30,6 +31,7 @@ var playerImg;
 // //Fonts
 var OPEN_SANS_LIGHT;
 var PLAY_FAIR_DISPLAY_BOLD;
+var BODONI;
 
 //Preloading Images
 function preload(){
@@ -43,6 +45,7 @@ function preload(){
     //Fonts
     OPEN_SANS_LIGHT = loadFont('Fonts/OpenSans-Light.ttf');
     PLAY_FAIR_DISPLAY_BOLD = loadFont('Fonts/PlayfairDisplay-Bold.ttf');
+    BODONI = loadFont('Fonts/BodoniFLF-Roman.ttf');
 }
 
 function showScores(data){
@@ -54,7 +57,7 @@ function showScores(data){
         textStyle(BOLD);
         fill(255)
         //textStyle(BOLD)
-    gameButton.style("font-family", "Bodoni");
+        //textFont(BODONI);
         text('High Scores',9.25,textHeight-40)
         fill(col)
         //textStyle(NORMAL)
@@ -80,6 +83,7 @@ function showScores(data){
 function setup() {
     //fullscreen(true);
     globalWinHeight =  windowHeight;
+    globalWinWidth =  windowHeight;
     leftString = windowWidth/4;
     rightString = 3/4*windowWidth;
     stringHorSpan = windowWidth /2;
@@ -104,7 +108,7 @@ function setup() {
     gameButton.size(120,75);
     gameButton.position(windowWidth-windowWidth/5,130);
     gameButton.style('background-color',col);
-    gameButton.style("font-family", "Bodoni");
+    //gameButton.style("font-family", "Bodoni");
     gameButton.style("font-size", "18px");
 
     //introP2 = createP('FIDDLER HERO!');
@@ -115,10 +119,10 @@ function setup() {
     //introP2.style('margin-top', '1%');
 
     inp = createInput('').attribute('placeholder', 'Enter Initials');
-    inp.position(windowWidth-windowWidth/5,130+100);
+    inp.position(windowWidth-windowWidth/5,130+85);
     inp.size(120,40);
     inp.style('font-size', '18px');
-    inp.style("font-family", "Bodoni");
+    //inp.style("font-family", "Bodoni");
     inp.style('text-align', 'center');
     //inp.style('width', '50px');
     //inp.style('display', 'table');
@@ -162,11 +166,11 @@ function draw() {
             showScores(scoresFromDB);
         }
         fill(0);
-        strokeWeight(10);
+        strokeWeight(7);
         line(stringLines[1],0,stringLines[1],windowHeight);
         line(stringLines[2],0,stringLines[2],windowHeight);
         fill(255);
-        strokeWeight(3);
+        strokeWeight(10);
         line(leftString,player.sprite.position.y-(player.sprite.height/2)
             ,rightString,player.sprite.position.y-(player.sprite.height/2));
 
@@ -247,7 +251,7 @@ class Player {
         this.sprite.setDefaultCollider();
         //this.playerSprite.immovable = true;
         this.sprite.scale = .1;
-        this.sprite.debug = true;
+        this.sprite.debug = false;
         this.sprite.addImage('playerSprite', img);
     }
 
@@ -259,7 +263,7 @@ class Note{
         this.sprite.setDefaultCollider();
         this.sprite.setVelocity(0, 18);
         this.sprite.scale = .3;
-        this.sprite.debug = true;
+        this.sprite.debug = false;
         this.sprite.addImage('noteSprite',random(noteImg));
     }
 
@@ -280,17 +284,18 @@ function setText(){
 
     // Iymanni's Logo
     fill(0);
-    ellipse(1300,55,110);
+    ellipse(windowWidth-windowWidth/5+60,65,110,110);
     fill(255);
     textSize(50)
     textStyle(NORMAL);
-    text("iah",1265,70);
+    text("iah",windowWidth-windowWidth/5-35+60,80);
 
     //Display Score
     textSize(50);
     textAlign(LEFT,TOP);
     fill(255);
     textStyle(BOLD);
+    //textFont(BODONI);
     text('Score: '+score,9.25,35);
     fill(235,81,15);
     text('Score: '+score,10,35.75);
