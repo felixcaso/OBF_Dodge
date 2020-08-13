@@ -70,7 +70,7 @@ io.sockets.on('connection',
             });
         }
     );
-    
+
 
     socket.on('get_scores', function(data) {
         dodgeDB.find( {} ).sort( { score: -1 }).toArray(

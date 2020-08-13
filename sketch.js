@@ -105,11 +105,12 @@ function setup() {
     createCanvas(windowWidth,windowHeight);
     gameButton = createButton('Start Game');
     gameButton.mouseClicked(startGame);
-    gameButton.size(120,75);
+    gameButton.size(140,75);
     gameButton.position(windowWidth-windowWidth/5,130);
     gameButton.style('background-color',col);
     //gameButton.style("font-family", "Bodoni");
     gameButton.style("font-size", "18px");
+    gameButton.style('text-align', 'center');
 
     //introP2 = createP('FIDDLER HERO!');
     //introP2.position(windowWidth-windowWidth/5,150+80);
@@ -118,12 +119,14 @@ function setup() {
     //introP2.style('margin', '0 auto');
     //introP2.style('margin-top', '1%');
 
-    inp = createInput('').attribute('placeholder', 'Enter Initials');
+    inp = createInput('').attribute('placeholder', '@IGName');
     inp.position(windowWidth-windowWidth/5,130+85);
-    inp.size(120,40);
+    inp.size(140,40);
     inp.style('font-size', '18px');
     //inp.style("font-family", "Bodoni");
     inp.style('text-align', 'center');
+
+
     //inp.style('width', '50px');
     //inp.style('display', 'table');
     //inp.style('margin', '0 auto');
@@ -160,6 +163,27 @@ function get_scores() {
 
 function draw() {
     background(backgroundImg);
+    //show logo right away
+    // Iymanni's Logo
+    fill(0);
+    ellipse(windowWidth-windowWidth/5+60,65,110,110);
+    fill(255);
+    textSize(50)
+    textStyle(NORMAL);
+    text("iah",windowWidth-windowWidth/5-35+60,80);
+
+    fill(255)
+    rect(windowWidth-windowWidth/5,130+65+85,140,320);
+
+    textSize(15);
+    fill(0)
+    text('Welcome to Fiddler Hero! Use arrow keys <- -> to move the fiddle ' +
+        'and catch the notes. ' +
+        'When you catch a note you should hear the melody.' +
+        'This 2 minute song is called Adoration by Florence Price. Enjoy! ' +
+        'If the song stops before 2 minutes, try refreshing the browser.',
+        windowWidth-windowWidth/5+5,130+65+95,140,320);
+
     if(gameStarted){
         setText();
         if(gotScores) {
@@ -183,12 +207,13 @@ function draw() {
         //     }
         // }
 
-        if(gNote.sprite.position.y > player.sprite.position.y ){//windowHeight-10
+        //trying to have more chance for collision hence - 40
+        if(gNote.sprite.position.y - 40 > player.sprite.position.y ){//windowHeight-10
             gNote.sprite.remove();
             //userNote = false;
         }
-
-        if(userNote && frameCount > timeStamp + 40){
+        //increased time from 40 to 50 to allow for more chance for collision
+        if(userNote && frameCount > timeStamp + 50){
             userNote = false;
         }
 
@@ -282,13 +307,6 @@ function setText(){
     // text("OBF-Dodge The Trebel-Clef ", 830,15);
     // text('Last As Long As You Can!',830,40);
 
-    // Iymanni's Logo
-    fill(0);
-    ellipse(windowWidth-windowWidth/5+60,65,110,110);
-    fill(255);
-    textSize(50)
-    textStyle(NORMAL);
-    text("iah",windowWidth-windowWidth/5-35+60,80);
 
     //Display Score
     textSize(50);
