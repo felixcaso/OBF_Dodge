@@ -1,0 +1,27 @@
+{
+  "name": "OBF_Dodge",
+  "version": "1.0.0",
+  "description": "Dodge Music Notes-OBF",
+  "main": "Tone.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^3.6.0",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felixcaso/OBF_Dodge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/felixcaso/OBF_Dodge/issues"
+  },
+  "homepage": "https://github.com/felixcaso/OBF_Dodge#readme"
+}
