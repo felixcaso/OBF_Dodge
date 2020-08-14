@@ -26,7 +26,12 @@ var fontCol;
 //Images Variables
 var backgroundImg;
 var noteImg = [];
+var noteImg_sm = [];;
 var playerImg;
+var gameStartTime=0;
+//for mobile
+var playerImg_sm;
+
 
 // //Fonts
 var OPEN_SANS_LIGHT;
@@ -39,8 +44,12 @@ function preload(){
     for(var i=0; i<3;i++){
         noteImg[i] = loadImage('Images/musicNote'+i+'.png');
     }
+    for(var i=0; i<3;i++){
+        noteImg_sm[i] = loadImage('Images/musicNote'+i+'_sm.png');
+    }
     backgroundImg = loadImage('Images/bg2.jpg');
     playerImg = loadImage('Images/player.png');
+    playerImg_sm = loadImage('Images/player_sm.png');
 
     //Fonts
     OPEN_SANS_LIGHT = loadFont('Fonts/OpenSans-Light.ttf');
@@ -52,28 +61,41 @@ function showScores(data){
         //alert(data);
         //console.log(data)
 
+        //this is the starting y value of the text
         var textHeight = 170;
+    if(windowWidth<600) {
+        textSize(30*0.6);
+    }else{
         textSize(30);
+    }
         textStyle(BOLD);
         fill(255)
         //textStyle(BOLD)
         //textFont(BODONI);
-        text('High Scores',9.25,textHeight-40)
+        text('High Scores',9,textHeight-40)
         fill(col)
         //textStyle(NORMAL)
-        text('High Scores',10,textHeight-40+0.75)
+        text('High Scores',10,textHeight-40+1)
         //textStyle(NORMAL);
         data.forEach(entry => {
             //console.log(entry);
             if(Object.keys(entry).length>2) {
                 if(textHeight < globalWinHeight-40) {
-                    fill(255)
-                    textStyle(BOLD)
-                    text(entry.username + ': ' + entry.score, 9.25, textHeight)
-                    fill(col)
-                    //textStyle(NORMAL)
-                    text(entry.username + ': ' + entry.score, 10, textHeight + 0.75)
-                    textHeight += 40
+                    if(entry.username!='') {
+                        fill(255)
+                        textStyle(BOLD)
+                        text(entry.username + ': ' + entry.score, 9.25, textHeight)
+                        fill(col)
+                        //textStyle(NORMAL)
+                        text(entry.username + ': ' + entry.score, 10, textHeight + 0.75)
+                        console.log(windowWidth);
+                        if (windowWidth < 600) {
+                            textHeight += 40 * 0.6;
+                        } else {
+                            textHeight += 40;
+                        }
+                    }
+
                 }
             }
         })
@@ -173,18 +195,19 @@ function draw() {
     text("iah",windowWidth-windowWidth/5-35+60,80);
 
     fill(255)
-    rect(windowWidth-windowWidth/5,130+65+85,140,320);
+    rect(windowWidth-windowWidth/5,130+65+85,140,340);
 
     textSize(15);
     fill(0)
-    text('Welcome to Fiddler Hero! Use arrow keys <- -> to move the fiddle ' +
+    text('Welcome to Fiddler Hero! Use arrow keys <- -> or click to move the fiddle ' +
         'and catch the notes. ' +
         'When you catch a note you should hear the melody.' +
         'This 2 minute song is called Adoration by Florence Price. Enjoy! ' +
         'If the song stops before 2 minutes, try refreshing the browser.',
-        windowWidth-windowWidth/5+5,130+65+95,140,320);
+        windowWidth-windowWidth/5+5,130+65+95,140,340);
 
     if(gameStarted){
+
         setText();
         if(gotScores) {
             showScores(scoresFromDB);
@@ -219,7 +242,27 @@ function draw() {
 
         gNote.sprite.collide(player.sprite,playNote);
         drawSprites();
+
+        if(frameCount<gameStartTime + 300) {
+            if (windowWidth < 600) {
+                fill(255)
+                textSize(20);
+                textAlign(CENTER, CENTER);
+                text('click to move the violin', windowWidth/2, windowHeight / 3);
+            } else {
+                fill(255)
+                textSize(40);
+                textAlign(CENTER, CENTER);
+                text('click to move the violin', windowWidth/2, windowHeight / 3);
+                text('or use arrow keys <-  ->', windowWidth/2, windowHeight * 0.5);
+
+            }
+        }
+
     }//end game started(main loop)
+
+
+
 
 }//end draw()
 
@@ -233,6 +276,26 @@ function keyPressed() {
     if(gameStarted) {
         player.sprite.position.x = constrain(player.sprite.position.x, leftString, rightString);
     }
+}
+
+function mousePressed(){
+    if(gameStarted){
+        if (mouseX <= stringLines[1] - stringHorSpan / 6) {
+            player.sprite.position.x = stringLines[0];
+        }
+        if (mouseX >= stringLines[2] - stringHorSpan / 6) {
+            player.sprite.position.x = stringLines[3];
+        }
+        if (mouseX > stringLines[1] - stringHorSpan / 6 &&
+            mouseX < stringLines[1] + stringHorSpan / 6) {
+            player.sprite.position.x = stringLines[1];
+        }
+        if (mouseX > stringLines[2] - stringHorSpan / 6 &&
+            mouseX < stringLines[2] + stringHorSpan / 6) {
+            player.sprite.position.x = stringLines[2];
+        }
+    }
+
 }
 
 // function newNote() {
@@ -249,11 +312,23 @@ function keyPressed() {
 function startGame(){
     if(!gameStarted){
         gameStarted = true;
+        gameStartTime = frameCount;
         score = 0;
         unique_username = inp.value();
         //register_user();
         get_scores();
-        player = new Player(random(stringLines),windowHeight - 100,10,10,playerImg);
+        //console.log('globalWinWidth: '+ globalWinWidth);
+        //console.log('displayWidth: '+ displayWidth);
+        console.log('windowWidth: '+ windowWidth);
+        if(windowWidth<600) {
+            player = new Player(random(stringLines), windowHeight - 100, 3, 3, playerImg_sm);
+            for(var i=0; i<3;i++){
+                noteImg[i] = noteImg_sm[i];
+            }
+        }
+        else{
+            player = new Player(random(stringLines), windowHeight - 100, 10, 10, playerImg);
+        }
         gNote = new Note();
 
         //this starts the song playing
@@ -309,14 +384,19 @@ function setText(){
 
 
     //Display Score
-    textSize(50);
+    if(windowWidth<600) {
+        textSize(50*0.5);
+    }
+    else{
+        textSize(50);
+    }
     textAlign(LEFT,TOP);
     fill(255);
     textStyle(BOLD);
     //textFont(BODONI);
-    text('Score: '+score,9.25,35);
+    text('Score: '+score,9,35);
     fill(235,81,15);
-    text('Score: '+score,10,35.75);
+    text('Score: '+score,10,36);
 }
 
 function playNote(){
