@@ -84,19 +84,19 @@ function makeSong(midi) {
     //************** Create Synths and Parts, one for each track  ********************
     for (let i = 0; i < numofVoices; i++) {
         synths[i] = new Tone.PolySynth().toMaster()
-        violinSynth = new Tone.AMSynth().toMaster()
+        violinSynth = new Tone.FMSynth().toMaster()
 
 
         var part = new Tone.Part(function (time, value) {
             //lowered velocity
-            synths[i].triggerAttackRelease(value.name, value.duration, time, value.velocity * 0.1)
+            synths[i].triggerAttackRelease(value.name, value.duration, time, value.velocity * 0.15)
         }, midi.tracks[i].notes).start()
 
         //this loads the pianoJSON into transport as another part
         part2 = new Tone.Part(function (time, value) {
             //raised velocity
             if (userNote) {
-                violinSynth.triggerAttackRelease(value.name, value.duration, time, value.velocity)
+                violinSynth.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
             }
 
         }, violinJSON.tracks[0].notes).start()
