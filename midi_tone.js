@@ -105,37 +105,41 @@ function makeSong(midi) {
 
 //************** Set up position & BPM indicators  ********************
 
-Tone.Transport.scheduleRepeat(function (time) {
-    //showPosition()
+//Tone.Transport.scheduleRepeat(function (time) {
+    setInterval(function() {
+            //showPosition()
 
-    violinJSON.tracks[0].notes.forEach(note => {
-        //in general, notes seem to be about 400 ticks apart
-        //for some reason, the ticks when the schedule repeat function is called
-        //are not nice round numbers or multiples of 10
-        //a tolerance of 50 seems to work for finding violin notes that
-        //start at about the same ticks as where the song is currently
-        //playing the piano notes
-        if (Math.abs((Tone.Transport.ticks+450) - note.ticks) < 50) {
-           // document.getElementById("upcomingnotes").textContent = note.name
+            violinJSON.tracks[0].notes.forEach(note => {
+                //in general, notes seem to be about 400 ticks apart
+                //for some reason, the ticks when the schedule repeat function is called
+                //are not nice round numbers or multiples of 10
+                //a tolerance of 50 seems to work for finding violin notes that
+                //start at about the same ticks as where the song is currently
+                //playing the piano notes
+                if (Math.abs((Tone.Transport.ticks + 450) - note.ticks) < 50) {
+                    // document.getElementById("upcomingnotes").textContent = note.name
 
-            //create a new graphical note in the game
-            if(note.ticks>oldNoteTicks+60) {
-                //newNote();
-                gNote = new Note();
-                oldNoteTicks = note.ticks;
-            }
-        }
-        if(Tone.Transport.ticks>=90700){
-        //if(Tone.Transport.ticks>=10700){
-            gameOver()
-            Tone.Transport.stop()
-            //alert('game over')
-        }
+                    //create a new graphical note in the game
+                    if (note.ticks > oldNoteTicks + 60) {
+                        //newNote();
+                        gNote = new Note();
+                        oldNoteTicks = note.ticks;
+                    }
+                }
+                if (Tone.Transport.ticks >= 92700) {
+                    //if(Tone.Transport.ticks>=10700){
+                    gameOver()
+                    Tone.Transport.stop()
+                    //alert('game over')
+                }
 
 
+            })
+        },50
+    )
 
-    })
-}, "16n")
+
+//}, "16n")
 
 
 //this is not being called in obfdodge - but left in for potential future use
