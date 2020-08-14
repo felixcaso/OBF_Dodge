@@ -31,7 +31,11 @@ var playerImg;
 var gameStartTime=0;
 //for mobile
 var playerImg_sm;
-
+var leftOf_UIitems;
+var centerOf_UIitems;
+var widthUI;
+var widthUIRect;
+var widthButton;
 
 // //Fonts
 var OPEN_SANS_LIGHT;
@@ -62,10 +66,13 @@ function showScores(data){
         //console.log(data)
 
         //this is the starting y value of the text
-        var textHeight = 170;
+
+
     if(windowWidth<600) {
+        var textHeight = 120;
         textSize(30*0.6);
     }else{
+        var textHeight = 140;
         textSize(30);
     }
         textStyle(BOLD);
@@ -111,6 +118,10 @@ function setup() {
     stringHorSpan = windowWidth /2;
     stringLines = [leftString,leftString+1/2*windowWidth*1/3,leftString+1/2*windowWidth*2/3,rightString];
 
+    centerOf_UIitems = windowWidth-windowWidth/5+58;
+    widthUI = 140;
+    leftOf_UIitems = centerOf_UIitems-widthUI/2;
+
     socket = io();
     socket.on('scores_from_db',
         function(data){
@@ -123,12 +134,19 @@ function setup() {
     //Create Canvas
     col = color(235,81,15);
 
+    if(windowWidth<600) {
+        widthButton = widthUI*0.8;
+    }
+    else{
+        widthButton = widthUI;
+    }
+
     fontCol = color(255);
     createCanvas(windowWidth,windowHeight);
     gameButton = createButton('Start Game');
     gameButton.mouseClicked(startGame);
-    gameButton.size(140,75);
-    gameButton.position(windowWidth-windowWidth/5,130);
+    gameButton.size(widthButton,75);
+    gameButton.position(leftOf_UIitems,130);
     gameButton.style('background-color',col);
     //gameButton.style("font-family", "Bodoni");
     gameButton.style("font-size", "18px");
@@ -142,8 +160,8 @@ function setup() {
     //introP2.style('margin-top', '1%');
 
     inp = createInput('').attribute('placeholder', '@IGName');
-    inp.position(windowWidth-windowWidth/5,130+85);
-    inp.size(140,40);
+    inp.position(leftOf_UIitems,130+85);
+    inp.size(widthButton-9,40);
     inp.style('font-size', '18px');
     //inp.style("font-family", "Bodoni");
     inp.style('text-align', 'center');
@@ -187,24 +205,36 @@ function draw() {
     background(backgroundImg);
     //show logo right away
     // Iymanni's Logo
+
     fill(0);
-    ellipse(windowWidth-windowWidth/5+60,65,110,110);
+    ellipse(centerOf_UIitems,65,110,110);
     fill(255);
     textSize(50)
     textStyle(NORMAL);
-    text("iah",windowWidth-windowWidth/5-35+60,80);
+    textAlign(CENTER,CENTER)
+    text("iah",centerOf_UIitems,65);
 
     fill(255)
-    rect(windowWidth-windowWidth/5,130+65+85,140,340);
 
-    textSize(15);
+    if(windowWidth<600) {
+        widthUIRect = 0.67 * widthUI;
+        textSize(13.5);
+    }
+    else{
+        widthUIRect = widthUI;
+        textSize(16);
+    }
+
+    rect(leftOf_UIitems,130+65+85-8,widthUIRect,347);
     fill(0)
+    textAlign(LEFT,TOP)
+
     text('Welcome to Fiddler Hero! Use arrow keys <- -> or click to move the fiddle ' +
         'and catch the notes. ' +
         'When you catch a note you should hear the melody.' +
-        'This 2 minute song is called Adoration by Florence Price. Enjoy! ' +
-        'If the song stops before 2 minutes, try refreshing the browser.',
-        windowWidth-windowWidth/5+5,130+65+95,140,340);
+        'to "Adoration" by Florence Price. Enjoy! ' +
+        'If the song stops before 2 minutes, or to replay, refresh the browser.',
+        leftOf_UIitems+4,130+65+92-8,widthUIRect,340);
 
     if(gameStarted){
 
@@ -248,21 +278,18 @@ function draw() {
                 fill(255)
                 textSize(20);
                 textAlign(CENTER, CENTER);
-                text('click to move the violin', windowWidth/2, windowHeight / 3);
+                text('Click to move the violin', windowWidth/2, windowHeight / 3);
             } else {
                 fill(255)
-                textSize(40);
+                textSize(37);
                 textAlign(CENTER, CENTER);
-                text('click to move the violin', windowWidth/2, windowHeight / 3);
+                text('Click to move the violin', windowWidth/2, windowHeight / 3);
                 text('or use arrow keys <-  ->', windowWidth/2, windowHeight * 0.5);
 
             }
         }
 
     }//end game started(main loop)
-
-
-
 
 }//end draw()
 
