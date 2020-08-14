@@ -231,7 +231,7 @@ function draw() {
 
     text('Welcome to Fiddler Hero! Use arrow keys <- -> or click to move the fiddle ' +
         'and catch the notes. ' +
-        'When you catch a note you should hear the melody.' +
+        'When you catch a note you should hear the melody ' +
         'to "Adoration" by Florence Price. Enjoy! ' +
         'If the song stops before 2 minutes, or to replay, refresh the browser.',
         leftOf_UIitems+4,130+65+92-8,widthUIRect,340);
