@@ -9,6 +9,9 @@ var counter = 0;
 var timeStamp = 0; //timer placeholder
 var unique_username;
 var inp;
+var pianoSamples;
+
+var violinSamples;
 
 var socket;
 var scoresFromDB;
@@ -59,14 +62,20 @@ function preload(){
     OPEN_SANS_LIGHT = loadFont('Fonts/OpenSans-Light.ttf');
     PLAY_FAIR_DISPLAY_BOLD = loadFont('Fonts/PlayfairDisplay-Bold.ttf');
     BODONI = loadFont('Fonts/BodoniFLF-Roman.ttf');
+
+    pianoSamples = SampleLibrary.load({
+        instruments: "piano"
+    });
+
+    violinSamples = SampleLibrary.load({
+        instruments: "violin"
+    });
+
+    pianoSamples.toMaster();
+    violinSamples.toMaster();
 }
 
 function showScores(data){
-        //alert(data);
-        //console.log(data)
-
-        //this is the starting y value of the text
-
 
     if(windowWidth<600) {
         var textHeight = 120;
@@ -85,7 +94,6 @@ function showScores(data){
         text('High Scores',10,textHeight-40+1)
         //textStyle(NORMAL);
         data.forEach(entry => {
-            //console.log(entry);
             if(Object.keys(entry).length>2) {
                 if(textHeight < globalWinHeight-40) {
                     if(entry.username!='') {
@@ -95,7 +103,6 @@ function showScores(data){
                         fill(col)
                         //textStyle(NORMAL)
                         text(entry.username + ': ' + entry.score, 10, textHeight + 0.75)
-                        console.log(windowWidth);
                         if (windowWidth < 600) {
                             textHeight += 40 * 0.6;
                         } else {
@@ -111,6 +118,8 @@ function showScores(data){
 
 function setup() {
     //fullscreen(true);
+
+
     globalWinHeight =  windowHeight;
     globalWinWidth =  windowHeight;
     leftString = windowWidth/4;
@@ -126,7 +135,6 @@ function setup() {
     socket.on('scores_from_db',
         function(data){
             scoresFromDB = data;
-            //console.log(scoresFromDB);
             gotScores = true;
         }
 
@@ -344,9 +352,6 @@ function startGame(){
         unique_username = inp.value();
         //register_user();
         get_scores();
-        //console.log('globalWinWidth: '+ globalWinWidth);
-        //console.log('displayWidth: '+ displayWidth);
-        console.log('windowWidth: '+ windowWidth);
         if(windowWidth<600) {
             player = new Player(random(stringLines), windowHeight - 100, 3, 3, playerImg_sm);
             for(var i=0; i<3;i++){

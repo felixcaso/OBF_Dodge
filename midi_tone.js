@@ -31,7 +31,6 @@ var noteName = '';
 //this keeps track of the ticks of the previous note
 var oldNoteTicks = 0;
 
-
 function fetchMidi(myURL) {
     //console.log(myURL)
     Midi.fromUrl(myURL).then(midi => {
@@ -89,14 +88,18 @@ function makeSong(midi) {
 
         var part = new Tone.Part(function (time, value) {
             //lowered velocity
-            synths[i].triggerAttackRelease(value.name, value.duration, time, value.velocity * 0.15)
+
+            pianoSamples.triggerAttackRelease(value.name, value.duration, time, value.velocity * 0.15)
+
+            //synths[i].triggerAttackRelease(value.name, value.duration, time, value.velocity * 0.15)
         }, midi.tracks[i].notes).start()
 
-        //this loads the pianoJSON into transport as another part
+        //this loads the violinJSON into transport as another part
         part2 = new Tone.Part(function (time, value) {
             //raised velocity
             if (userNote) {
-                violinSynth.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
+                violinSamples.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
+                //violinSynth.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
             }
 
         }, violinJSON.tracks[0].notes).start()
