@@ -89,7 +89,8 @@ class noteGrid {
                 let y = this.centerPoints[i][j].y
                 let noteName = this.centerPoints[i][j].note
                 if(this.centerPoints[i][j].lit === true){
-                    fill(255,0,0)
+                    //fill(255,0,0)
+                    fill(col)
                     ellipse(x,y,diameter,diameter)
                     fill(255)
                     textSize(18)
@@ -119,13 +120,6 @@ class noteGrid {
         let diameter = (this.height-this.startY) / 6;
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 7; j++) {
-                    this.centerPoints[i][j].lit = false
-                }
-        }
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 7; j++) {
-                //console.log(this.centerPoints[i][j].note)
-                //console.log(noteName)
                 if (this.centerPoints[i][j].note === noteName) {
                     let x = this.centerPoints[i][j].x
                     let y = this.centerPoints[i][j].y
@@ -134,6 +128,14 @@ class noteGrid {
             }
         }
 
+    }
+
+    clearGrid(){
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 7; j++) {
+                this.centerPoints[i][j].lit = false
+            }
+        }
     }
 
 
@@ -286,6 +288,18 @@ function get_scores() {
     socket.emit('get_scores',data);
 }
 
+function checkCollision(){
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 7; j++) {
+            let x = noteGrid1.centerPoints[i][j].x;
+            let lit = noteGrid1.centerPoints[i][j].lit;
+            if(lit && Math.abs(player.sprite.position.x-x)<5) {
+                playNote()
+            }
+        }
+    }
+}
+
 
 
 function draw() {
@@ -347,10 +361,11 @@ function draw() {
         }
         //increased time from 40 to 50 to allow for more chance for collision
         if(userNote && frameCount > timeStamp + 50){
-            userNote = false;
+            //userNote = false;
         }
 
-        gNote.sprite.collide(player.sprite,playNote);
+        //gNote.sprite.collide(player.sprite,playNote);
+        checkCollision();
         drawSprites();
 
         if(frameCount<gameStartTime + 300) {
@@ -405,16 +420,6 @@ function mousePressed(){
 
 }
 
-// function newNote() {
-//     userNote = false;//
-//     note = createSprite(random(stringLines), 0, 50, 50);
-//     note.setDefaultCollider();
-//     note.setVelocity(0, 15);
-//     note.scale = .3;
-//     note.debug = true;
-//     note.addImage(random(noteImg));
-//     //notes.add(note);
-// }
 
 function startGame(){
     if(!gameStarted){
@@ -475,17 +480,6 @@ class Note{
 }
 
 function setText(){
-    //Instructions
-    // strokeWeight(0);
-    // textSize(16);
-    // textStyle(BOLD);
-    // textFont(PLAY_FAIR_DISPLAY_BOLD);
-    //
-    // //fill(235,81,15); //OBF color (red-oraange)
-    // fill(0);
-    // text("OBF-Dodge The Trebel-Clef ", 830,15);
-    // text('Last As Long As You Can!',830,40);
-
 
     //Display Score
     if(windowWidth<600) {
@@ -507,5 +501,5 @@ function playNote(){
     userNote = true;
     timeStamp = frameCount;
     score++;
-    gNote.sprite.remove();
+    //gNote.sprite.remove();
 }

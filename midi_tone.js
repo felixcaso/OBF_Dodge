@@ -82,12 +82,19 @@ function makeSong(midi) {
     }
 
     violinJSON.tracks[0].notes.forEach(note => {
-        var earlyTime = (Number(note.ticks) - 450) +'i'
-        console.log(earlyTime)
+        var earlyTime = (Number(note.ticks) - 300) +'i'
         Tone.Transport.schedule(function (time) {
             //gNote = new Note();
             noteGrid1.highlightNote(note.name);
         },earlyTime);
+    })
+
+    violinJSON.tracks[0].notes.forEach(note => {
+        var lateTime = (Number(note.ticks) + 50) +'i'
+        Tone.Transport.schedule(function (time) {
+            //gNote = new Note();
+            noteGrid1.clearGrid();
+        },lateTime);
     })
 
     //************** Create Synths and Parts, one for each track  ********************
@@ -110,6 +117,7 @@ function makeSong(midi) {
             //console.log(time)
             if (userNote) {
                 violinSamples.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
+                userNote = false;
                 //violinSynth.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
             }
 
