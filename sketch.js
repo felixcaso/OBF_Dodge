@@ -12,6 +12,10 @@ var inp;
 var pianoSamples;
 
 var violinSamples;
+var noteList = ['G#3','A3','A#3','B3','C4','C#4','D4',
+    'D#4','E4','F4','F#4','G4','G#4','A4',
+    'A#4','B4','C5','C#5','D5','D#5','E5',
+    'F5','F#5','G5','G#5','A5','A#5','B5']
 
 var socket;
 var scoresFromDB;
@@ -44,6 +48,98 @@ var widthButton;
 var OPEN_SANS_LIGHT;
 var PLAY_FAIR_DISPLAY_BOLD;
 var BODONI;
+
+var noteGrid1;
+
+//grid
+class noteGrid {
+    constructor(upperLeft, stringGap, noteGap, totalWidth, height, startY){
+        this.upperLeft = upperLeft;
+        this.noteGap = noteGap;
+        this.totalWidth = totalWidth;
+        this.stringGap = stringGap;
+        this.height = height;
+        this.startY = startY;
+        var column1 = [];
+        var column2 = [];
+        var column3 = [];
+        var column4 = [];
+        this.centerPoints = [column1,column2,column3,column4]
+    }
+
+    makeGrid(){
+        for(var i = 0; i<4; i++) {
+            for(var j = 0; j<7; j++){
+                var fingerPlacement = {};
+                fingerPlacement.x = this.upperLeft+i*this.stringGap;
+                fingerPlacement.y = this.startY+((this.height-this.startY) / 6) * j;
+                fingerPlacement.note = ''
+                fingerPlacement.lit = false
+
+                this.centerPoints[i][j]= fingerPlacement;
+            }
+        }
+    }
+
+    displayGrid() {
+        let diameter = (this.height-this.startY) / 6;
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 7; j++) {
+                let x = this.centerPoints[i][j].x
+                let y = this.centerPoints[i][j].y
+                let noteName = this.centerPoints[i][j].note
+                if(this.centerPoints[i][j].lit === true){
+                    fill(255,0,0)
+                    ellipse(x,y,diameter,diameter)
+                    fill(255)
+                    textSize(18)
+                    text(noteName,x,y)
+                }
+                else {
+                    noFill()
+                    stroke(0)
+                    ellipse(x, y, diameter, diameter)
+                }
+            }
+        }
+    }
+
+    populateNotes(){
+        var counter = 0;
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 7; j++) {
+                let x = this.centerPoints[i][j].note = noteList[counter]
+                counter++
+            }
+        }
+
+    }
+
+    highlightNote(noteName){
+        let diameter = (this.height-this.startY) / 6;
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 7; j++) {
+                    this.centerPoints[i][j].lit = false
+                }
+        }
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 7; j++) {
+                //console.log(this.centerPoints[i][j].note)
+                //console.log(noteName)
+                if (this.centerPoints[i][j].note === noteName) {
+                    let x = this.centerPoints[i][j].x
+                    let y = this.centerPoints[i][j].y
+                    this.centerPoints[i][j].lit = true
+                }
+            }
+        }
+
+    }
+
+
+}
+
+
 
 //Preloading Images
 function preload(){
@@ -86,8 +182,6 @@ function showScores(data){
     }
         textStyle(BOLD);
         fill(255)
-        //textStyle(BOLD)
-        //textFont(BODONI);
         text('High Scores',9,textHeight-40)
         fill(col)
         //textStyle(NORMAL)
@@ -117,11 +211,9 @@ function showScores(data){
 
 
 function setup() {
-    //fullscreen(true);
-
 
     globalWinHeight =  windowHeight;
-    globalWinWidth =  windowHeight;
+    globalWinWidth =  windowWidth;
     leftString = windowWidth/4;
     rightString = 3/4*windowWidth;
     stringHorSpan = windowWidth /2;
@@ -131,6 +223,10 @@ function setup() {
     widthUI = 140;
     leftOf_UIitems = centerOf_UIitems-widthUI/2;
 
+    noteGrid1 = new noteGrid(leftString,stringHorSpan/3,windowHeight/2/7,stringHorSpan, windowHeight-250,100)
+    noteGrid1.makeGrid()
+    noteGrid1.populateNotes()
+    console.log(noteGrid1)
     socket = io();
     socket.on('scores_from_db',
         function(data){
@@ -156,31 +252,14 @@ function setup() {
     gameButton.size(widthButton,75);
     gameButton.position(leftOf_UIitems,130);
     gameButton.style('background-color',col);
-    //gameButton.style("font-family", "Bodoni");
     gameButton.style("font-size", "18px");
     gameButton.style('text-align', 'center');
-
-    //introP2 = createP('FIDDLER HERO!');
-    //introP2.position(windowWidth-windowWidth/5,150+80);
-    //introP2.style('font-size', '14px');
-    //introP2.style('display', 'table');
-    //introP2.style('margin', '0 auto');
-    //introP2.style('margin-top', '1%');
 
     inp = createInput('').attribute('placeholder', '@IGName');
     inp.position(leftOf_UIitems,130+85);
     inp.size(widthButton-9,40);
     inp.style('font-size', '18px');
-    //inp.style("font-family", "Bodoni");
     inp.style('text-align', 'center');
-
-
-    //inp.style('width', '50px');
-    //inp.style('display', 'table');
-    //inp.style('margin', '0 auto');
-    //inp.style('margin-top', '5%');
-
-   //notes = new Group();
 
 }
 
@@ -222,6 +301,8 @@ function draw() {
     textAlign(CENTER,CENTER)
     text("iah",centerOf_UIitems,65);
 
+    noteGrid1.displayGrid();
+
     fill(255)
 
     if(windowWidth<600) {
@@ -258,15 +339,6 @@ function draw() {
         strokeWeight(10);
         line(leftString,player.sprite.position.y-(player.sprite.height/2)
             ,rightString,player.sprite.position.y-(player.sprite.height/2));
-
-        //Vertical Note Movement
-        // for(var i=notes.length-1; i>=0; i--) {
-        //     notes[i].collide(player.playerSprite,playNote);
-        //     if (notes[i].position.y > player.playerSprite.position.y - (player.playerSprite.height/2)) {
-        //         //notes.splice(i, 1);
-        //         notes[i].remove();
-        //     }
-        // }
 
         //trying to have more chance for collision hence - 40
         if(gNote.sprite.position.y - 40 > player.sprite.position.y ){//windowHeight-10

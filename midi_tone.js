@@ -20,7 +20,7 @@ CW_violin.tempoOffset = 0;
 var violinSynth;
 
 //the violin part
-var part2;
+var violinPart;
 
 //this is the boolean that keeps track of whether the right note was pressed
 var userNote = false;
@@ -57,11 +57,11 @@ function makeSong(midi) {
     Tone.Transport.PPQ = midi.header.ppq
     const numofVoices = midi.tracks.length
     const synths = []
-
     //************** Tell Transport about Time Signature changes  ********************
     for (let i = 0; i < midi.header.timeSignatures.length; i++) {
         Tone.Transport.schedule(function (time) {
             Tone.Transport.timeSignature = midi.header.timeSignatures[i].timeSignature;
+
             //console.log(midi.header.timeSignatures[i].timeSignature, Tone.Transport.timeSignature,Tone.Transport.position)
         }, midi.header.timeSignatures[i].ticks + "i");
     }
@@ -77,8 +77,18 @@ function makeSong(midi) {
     for (let i = 0; i < numofVoices; i++) {
         midi.tracks[i].notes.forEach(note => {
             note.time = note.ticks + "i"
+
         })
     }
+
+    violinJSON.tracks[0].notes.forEach(note => {
+        var earlyTime = (Number(note.ticks) - 450) +'i'
+        console.log(earlyTime)
+        Tone.Transport.schedule(function (time) {
+            //gNote = new Note();
+            noteGrid1.highlightNote(note.name);
+        },earlyTime);
+    })
 
     //************** Create Synths and Parts, one for each track  ********************
     for (let i = 0; i < numofVoices; i++) {
@@ -86,25 +96,28 @@ function makeSong(midi) {
         violinSynth = new Tone.FMSynth().toMaster()
 
 
-        var part = new Tone.Part(function (time, value) {
+        var pianoPart = new Tone.Part(function (time, value) {
             //lowered velocity
 
             pianoSamples.triggerAttackRelease(value.name, value.duration, time, value.velocity * 0.15)
 
             //synths[i].triggerAttackRelease(value.name, value.duration, time, value.velocity * 0.15)
-        }, midi.tracks[i].notes).start()
+        }, midi.tracks[i].notes).start(0)
 
         //this loads the violinJSON into transport as another part
-        part2 = new Tone.Part(function (time, value) {
+        violinPart = new Tone.Part(function (time, value) {
             //raised velocity
+            //console.log(time)
             if (userNote) {
                 violinSamples.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
                 //violinSynth.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
             }
 
-        }, violinJSON.tracks[0].notes).start()
+        }, violinJSON.tracks[0].notes).start(0)
     }
 }
+
+
 
 //************** Set up position & BPM indicators  ********************
 
@@ -125,8 +138,8 @@ function makeSong(midi) {
                     //create a new graphical note in the game
                     if (note.ticks > oldNoteTicks + 60) {
                         //newNote();
-                        gNote = new Note();
-                        oldNoteTicks = note.ticks;
+                        //gNote = new Note();
+                        //oldNoteTicks = note.ticks;
                     }
                 }
                 if (Tone.Transport.ticks >= 92700) {
