@@ -82,7 +82,7 @@ class noteGrid {
     }
 
     displayGrid() {
-        let diameter = (this.height-this.startY) / 6;
+        let diameter = stringHorSpan/3;
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 7; j++) {
                 let x = this.centerPoints[i][j].x
@@ -100,6 +100,10 @@ class noteGrid {
                     noFill()
                     stroke(0)
                     ellipse(x, y, diameter, diameter)
+                    stroke(255)
+                    fill(0)
+                    textSize(18)
+                    text(noteName,x,y)
                 }
             }
         }
@@ -216,10 +220,11 @@ function setup() {
 
     globalWinHeight =  windowHeight;
     globalWinWidth =  windowWidth;
-    leftString = windowWidth/4;
-    rightString = 3/4*windowWidth;
-    stringHorSpan = windowWidth /2;
-    stringLines = [leftString,leftString+1/2*windowWidth*1/3,leftString+1/2*windowWidth*2/3,rightString];
+    leftString = windowWidth/3;
+    stringHorSpan = windowWidth /3;
+    rightString = leftString+stringHorSpan;
+
+    stringLines = [leftString,leftString+stringHorSpan/3,rightString-stringHorSpan/3,rightString];
 
     centerOf_UIitems = windowWidth-windowWidth/5+58;
     widthUI = 140;
@@ -347,12 +352,15 @@ function draw() {
         }
         fill(0);
         strokeWeight(7);
+        stroke(0)
+        line(stringLines[0],0,stringLines[0],windowHeight);
         line(stringLines[1],0,stringLines[1],windowHeight);
         line(stringLines[2],0,stringLines[2],windowHeight);
+        line(stringLines[3],0,stringLines[3],windowHeight);
         fill(255);
         strokeWeight(10);
-        line(leftString,player.sprite.position.y-(player.sprite.height/2)
-            ,rightString,player.sprite.position.y-(player.sprite.height/2));
+        line(leftString-stringHorSpan/6,player.sprite.position.y-(player.sprite.height/2)
+            ,rightString+stringHorSpan/6,player.sprite.position.y-(player.sprite.height/2));
 
         //trying to have more chance for collision hence - 40
         if(gNote.sprite.position.y - 40 > player.sprite.position.y ){//windowHeight-10
@@ -370,6 +378,7 @@ function draw() {
 
         if(frameCount<gameStartTime + 300) {
             if (windowWidth < 600) {
+                strokeWeight(1);
                 fill(255)
                 textSize(20);
                 textAlign(CENTER, CENTER);
@@ -377,6 +386,7 @@ function draw() {
             } else {
                 fill(255)
                 textSize(37);
+                strokeWeight(1);
                 textAlign(CENTER, CENTER);
                 text('Click to move the violin', windowWidth/2, windowHeight / 3);
                 text('or use arrow keys <-  ->', windowWidth/2, windowHeight * 0.5);
