@@ -65,6 +65,8 @@ class noteGrid {
         var column3 = [];
         var column4 = [];
         this.centerPoints = [column1,column2,column3,column4]
+        this.diameter = stringHorSpan/3
+
     }
 
     makeGrid(){
@@ -75,6 +77,7 @@ class noteGrid {
                 fingerPlacement.y = this.startY+((this.height-this.startY) / 6) * j;
                 fingerPlacement.note = ''
                 fingerPlacement.lit = false
+                this.pressed = false
 
                 this.centerPoints[i][j]= fingerPlacement;
             }
@@ -82,24 +85,33 @@ class noteGrid {
     }
 
     displayGrid() {
-        let diameter = stringHorSpan/3;
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 7; j++) {
                 let x = this.centerPoints[i][j].x
                 let y = this.centerPoints[i][j].y
                 let noteName = this.centerPoints[i][j].note
+                //1st 2 positions first finger
+                //next 2 positions second finger
+                //next 2 positions third finger
+                //last position fourth finger
                 if(this.centerPoints[i][j].lit === true){
                     //fill(255,0,0)
-                    fill(col)
-                    ellipse(x,y,diameter,diameter)
+                    if(this.centerPoints[i][j].pressed) {
+                        fill(100)
+                    }
+                    else{
+                        fill(col)
+                    }
+                    ellipse(x, y, this.diameter)
                     fill(255)
                     textSize(18)
-                    text(noteName,x,y)
+                    text(noteName, x, y)
+
                 }
                 else {
                     noFill()
                     stroke(0)
-                    ellipse(x, y, diameter, diameter)
+                    ellipse(x, y, this.diameter)
                     stroke(255)
                     fill(0)
                     textSize(18)
@@ -134,10 +146,37 @@ class noteGrid {
 
     }
 
+    playNote(noteName){
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 7; j++) {
+                if (this.centerPoints[i][j].note === noteName && this.centerPoints[i][j].lit
+                && this.centerPoints[i][j].pressed) {
+                    //alert('true')
+                    return true;
+                }
+            }
+        }
+    }
+
     clearGrid(){
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 7; j++) {
                 this.centerPoints[i][j].lit = false
+                this.centerPoints[i][j].pressed = false;
+            }
+        }
+    }
+
+    checkPressed(){
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 7; j++) {
+                let x = this.centerPoints[i][j].x
+                let y = this.centerPoints[i][j].y
+                let rad = (this.diameter)*0.8
+                if(mouseX > x - rad && mouseX < x + rad && mouseY < y + rad && mouseY > y - rad){
+                    this.centerPoints[i][j].pressed = true;
+                    //alert('true')
+                }
             }
         }
     }
@@ -157,8 +196,12 @@ function preload(){
         noteImg_sm[i] = loadImage('Images/musicNote'+i+'_sm.png');
     }
     backgroundImg = loadImage('Images/bg2.jpg');
-    playerImg = loadImage('Images/player.png');
-    playerImg_sm = loadImage('Images/player_sm.png');
+
+    //playerImg = loadImage('Images/player.png');
+    //playerImg_sm = loadImage('Images/player_sm.png');
+
+    playerImg = loadImage('Images/bow2.png');
+    playerImg_sm = loadImage('Images/bow2_sm.png');
 
     //Fonts
     OPEN_SANS_LIGHT = loadFont('Fonts/OpenSans-Light.ttf');
@@ -220,8 +263,8 @@ function setup() {
 
     globalWinHeight =  windowHeight;
     globalWinWidth =  windowWidth;
-    leftString = windowWidth/3;
-    stringHorSpan = windowWidth /3;
+    leftString = windowWidth/2.35;
+    stringHorSpan = windowWidth /3.5;
     rightString = leftString+stringHorSpan;
 
     stringLines = [leftString,leftString+stringHorSpan/3,rightString-stringHorSpan/3,rightString];
@@ -230,7 +273,7 @@ function setup() {
     widthUI = 140;
     leftOf_UIitems = centerOf_UIitems-widthUI/2;
 
-    noteGrid1 = new noteGrid(leftString,stringHorSpan/3,windowHeight/2/7,stringHorSpan, windowHeight-250,100)
+    noteGrid1 = new noteGrid(leftString,stringHorSpan/3,windowHeight/2/7,stringHorSpan, windowHeight-250,50)
     noteGrid1.makeGrid()
     noteGrid1.populateNotes()
     console.log(noteGrid1)
@@ -321,6 +364,7 @@ function draw() {
     text("iah",centerOf_UIitems,65);
 
     noteGrid1.displayGrid();
+    noteGrid1.checkPressed()
 
     fill(255)
 
@@ -351,14 +395,16 @@ function draw() {
             showScores(scoresFromDB);
         }
         fill(0);
-        strokeWeight(7);
-        stroke(0)
+        strokeWeight(3);
+        stroke(0,0,0,150)
         line(stringLines[0],0,stringLines[0],windowHeight);
         line(stringLines[1],0,stringLines[1],windowHeight);
         line(stringLines[2],0,stringLines[2],windowHeight);
         line(stringLines[3],0,stringLines[3],windowHeight);
         fill(255);
-        strokeWeight(10);
+        strokeWeight(9);
+        stroke(0)
+        //fret
         line(leftString-stringHorSpan/6,player.sprite.position.y-(player.sprite.height/2)
             ,rightString+stringHorSpan/6,player.sprite.position.y-(player.sprite.height/2));
 
@@ -373,7 +419,7 @@ function draw() {
         }
 
         //gNote.sprite.collide(player.sprite,playNote);
-        checkCollision();
+        //checkCollision();
         drawSprites();
 
         if(frameCount<gameStartTime + 300) {
@@ -437,16 +483,17 @@ function startGame(){
         gameStartTime = frameCount;
         score = 0;
         unique_username = inp.value();
+        inp.hide();
         //register_user();
         get_scores();
         if(windowWidth<600) {
-            player = new Player(random(stringLines), windowHeight - 100, 3, 3, playerImg_sm);
+            player = new Player(random(stringLines), windowHeight - 75, 16, 6, playerImg_sm);
             for(var i=0; i<3;i++){
                 noteImg[i] = noteImg_sm[i];
             }
         }
         else{
-            player = new Player(random(stringLines), windowHeight - 100, 10, 10, playerImg);
+            player = new Player(random(stringLines), windowHeight - 100, 22, 10, playerImg);
         }
         gNote = new Note();
 

@@ -82,7 +82,7 @@ function makeSong(midi) {
     }
 
     violinJSON.tracks[0].notes.forEach(note => {
-        var earlyTime = (Number(note.ticks) - 300) +'i'
+        var earlyTime = (Number(note.ticks) - 400) +'i'
         Tone.Transport.schedule(function (time) {
             //gNote = new Note();
             noteGrid1.highlightNote(note.name);
@@ -90,7 +90,7 @@ function makeSong(midi) {
     })
 
     violinJSON.tracks[0].notes.forEach(note => {
-        var lateTime = (Number(note.ticks) + 50) +'i'
+        var lateTime = (Number(note.ticks) + 20) +'i'
         Tone.Transport.schedule(function (time) {
             //gNote = new Note();
             noteGrid1.clearGrid();
@@ -113,11 +113,11 @@ function makeSong(midi) {
 
         //this loads the violinJSON into transport as another part
         violinPart = new Tone.Part(function (time, value) {
-            //raised velocity
-            //console.log(time)
-            if (userNote) {
+            //if (userNote) {
+            if(noteGrid1.playNote(value.name)){
+                score++
                 violinSamples.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
-                userNote = false;
+                //userNote = false;
                 //violinSynth.triggerAttackRelease(value.name, value.duration, time, value.velocity*0.30)
             }
 
@@ -130,6 +130,7 @@ function makeSong(midi) {
 //************** Set up position & BPM indicators  ********************
 
 //Tone.Transport.scheduleRepeat(function (time) {
+/*
     setInterval(function() {
             //showPosition()
 
@@ -164,6 +165,8 @@ function makeSong(midi) {
 
 
 //}, "16n")
+
+ */
 
 
 //this is not being called in obfdodge - but left in for potential future use
